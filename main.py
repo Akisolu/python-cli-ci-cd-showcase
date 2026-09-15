@@ -5,7 +5,7 @@ from src.utils.id_comida import IdInput
 import src.crud as crud
 
 def validar_opcion_menu(entrada: str) -> int:
-    # Pydantic coerciona el string de input() a int y valida el rango [1, 4]
+    # Pydantic coerces the input() string to int and validates the [1, 4] range.
     datos = OpcionInput(opcion=entrada)
     return datos.opcion
 
@@ -13,7 +13,7 @@ def validar_comida(numero: str, nombre: str, precio: str) -> Comida:
     comida_validada = Comida(
         id=int(numero) if numero else None,
         nombre=nombre,
-        precio=float(precio)  # Convierte la cadena del input() a float explícitamente
+        precio=float(precio)  # Explicitly convert the input string to float.
     )
     return comida_validada
 
@@ -48,8 +48,8 @@ def agregar_comida():
         try: 
             comida = validar_comida(numero_comida, nombre_comida, precio_comida)
             crud.crear_comida(comida)
-            print(f"\nComida agregada exitosamente: {comida}") # Simulado
-            return comida  # Sale de la función y del bucle
+            print(f"\nComida agregada exitosamente: {comida}") # Simulated output.
+            return comida  # Exit the function and loop.
         except (ValidationError, ValueError) as e:
             print("\nDatos inválidos. Por favor, intente de nuevo.")
 
@@ -68,8 +68,8 @@ def eliminar_comida():
         try: 
             id_validado = validar_id_comida(id_comida)
             crud.eliminar_comida(id_validado)
-            print(f"\nComida eliminada exitosamente: {id_validado}") # Simulado
-            return id_validado # Sale de la funcion y del bucle
+            print(f"\nComida eliminada exitosamente: {id_validado}") # Simulated output.
+            return id_validado # Exit the function and loop.
         except ValidationError as e:
             print("\nID inválido. Por favor, intente de nuevo.")
 
@@ -78,14 +78,14 @@ def main():
         opcion = solicitar_opcion()
         
         if opcion is None:
-            continue  # Reintenta el menú
+            continue  # Retry the menu.
         
         if opcion == 1:
             agregar_comida()
         elif opcion == 2:
             ver_comidas()
         elif opcion == 3:
-            eliminar_comida()  # <-- Reemplaza el print por la llamada a la función
+            eliminar_comida()  # Call the delete operation.
         elif opcion == 4:
             print("Saliendo del sistema...")
             break

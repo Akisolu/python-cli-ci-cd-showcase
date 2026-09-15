@@ -1,4 +1,4 @@
-name: CI/CD - Build & Release Executables
+name: CI/CD - Test, Build & Release
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   # ==========================================
-  # 1. TESTING STAGE (CI)
+  # 1. TEST STAGE (CI)
   # ==========================================
   test:
     name: Run Test Suite
@@ -20,7 +20,7 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
-      - name: Copying the source code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -36,12 +36,12 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest pytest-cov pydantic
 
-      - name: Ejecutar Tests Unitarios e Integración
+      - name: Run test suite
         run: |
           python -m pytest tests/ -v
 
   # ==========================================
-  # 2. COMPILATION STAGE (CD)
+  # 2. BUILD STAGE (CD)
   # ==========================================
   build:
     name: Build Executable (${{ matrix.os }})
@@ -51,14 +51,14 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            artifact_name: restaurante_cli_windows.exe
+            artifact_name: restaurant_cli_windows.exe
             executable_path: dist/restaurant_cli.exe
           - os: ubuntu-latest
-            artifact_name: restaurante_cli_linux
+            artifact_name: restaurant_cli_linux
             executable_path: dist/restaurant_cli
 
     steps:
-      - name: Copying the source code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -73,16 +73,16 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pyinstaller pydantic
 
-      - name: Compile an executable with PyInstaller
+      - name: Build executable with PyInstaller
         run: |
           pyinstaller --onefile --name "restaurant_cli" main.py
 
-      - name: Rename artifact according to OS.
+      - name: Rename artifact for target OS
         shell: bash
         run: |
           mv ${{ matrix.executable_path }} ${{ matrix.artifact_name }}
 
-      - name: Upload artifacts to GitHub Actions
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: restaurant-cli-${{ matrix.os }}

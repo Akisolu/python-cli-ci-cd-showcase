@@ -2,7 +2,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-# Ruta al archivo ejecutable main.py
+# Path to the main.py executable script.
 MAIN_SCRIPT = Path(__file__).resolve().parents[2] / "main.py"
 
 def run_cli_session(inputs: list[str]) -> subprocess.CompletedProcess:
@@ -19,13 +19,13 @@ def run_cli_session(inputs: list[str]) -> subprocess.CompletedProcess:
     return process
 
 def test_e2e_flujo_agregar_y_salir(tmp_path, monkeypatch):
-    # Opciones ingresadas por el usuario secuencialmente:
-    # 1 (Agregar comida) -> ID: 1, Nombre: "Pizza E2E", Precio: 12.5 -> 4 (Salir)
+    # User inputs in sequence:
+    # 1 (Add meal) -> ID: 1, Name: "Pizza E2E", Price: 12.5 -> 4 (Exit)
     inputs = ["1", "1", "Pizza E2E", "12.5", "4"]
     
     result = run_cli_session(inputs)
 
-    # Verificaciones E2E
+    # End-to-end assertions.
     assert result.returncode == 0
     assert "Comida agregada exitosamente" in result.stdout
     assert "Saliendo del sistema..." in result.stdout

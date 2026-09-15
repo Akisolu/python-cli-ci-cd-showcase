@@ -4,35 +4,35 @@ from src.utils.input_menu import OpcionInput
 
 
 # ==========================================
-# 1. CASOS VÁLIDOS (Límite 1 a 4)
+# 1. VALID CASES (Range 1 to 4)
 # ==========================================
 
-@pytest.mark.parametrize("input_val, esperado", [
+@pytest.mark.parametrize("input_value, expected", [
     ("1", 1),
     ("2", 2),
     ("3", 3),
     ("4", 4),
 ])
-def test_opcion_input_valida(input_val, esperado):
-    # Instanciación directa del modelo ubicado en src/utils/input.py
-    validador = OpcionInput(opcion=input_val)
-    assert validador.opcion == esperado
+def test_menu_option_input_valid(input_value, expected):
+    # Directly instantiate the model from src/utils/input_menu.py.
+    validator = OpcionInput(opcion=input_value)
+    assert validator.opcion == expected
 
 
 # ==========================================
-# 2. CASOS INVÁLIDOS (Lanza ValidationError)
+# 2. INVALID CASES (Raises ValidationError)
 # ==========================================
 
-@pytest.mark.parametrize("input_val", [
-    "abc",    # Texto no numérico
-    "-1",     # Fuera de rango inferior
-    "0",      # Fuera de rango inferior
-    "5",      # Fuera de rango superior
-    "99",     # Fuera de rango
+@pytest.mark.parametrize("input_value", [
+    "abc",    # Non-numeric text
+    "-1",     # Below the lower bound
+    "0",      # Below the lower bound
+    "5",      # Above the upper bound
+    "99",     # Out of range
     "1.5",    # Float
-    "True",   # Booleano como string
-    "",       # String vacío
+    "True",   # Boolean represented as a string
+    "",       # Empty string
 ])
-def test_opcion_input_invalida(input_val):
+def test_menu_option_input_invalid(input_value):
     with pytest.raises(ValidationError):
-        OpcionInput(opcion=input_val)
+        OpcionInput(opcion=input_value)

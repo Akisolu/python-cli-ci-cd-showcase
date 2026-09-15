@@ -63,7 +63,7 @@ def eliminar_comida(comida_id: int) -> bool:
     comidas_filtradas = [c for c in comidas if c["id"] != comida_id]
     
     if len(comidas_filtradas) == len(comidas):
-        return False  # No se encontró el ID
+        return False  # The ID was not found.
         
     _guardar_datos(comidas_filtradas)
     return True
