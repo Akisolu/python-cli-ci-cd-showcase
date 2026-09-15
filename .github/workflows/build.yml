@@ -9,22 +9,27 @@ on:
 
 jobs:
   # ==========================================
-  # 1. ETAPA DE PRUEBAS (CI)
+  # 1. TESTING STAGE (CI)
   # ==========================================
   test:
     name: Run Test Suite
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
-      - name: Checkout del código
+      - name: Copying the source code
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         shell: bash
         run: |
           python -m pip install --upgrade pip
@@ -36,55 +41,55 @@ jobs:
           python -m pytest tests/ -v
 
   # ==========================================
-  # 2. ETAPA DE COMPILACIÓN (CD)
+  # 2. COMPILATION STAGE (CD)
   # ==========================================
   build:
     name: Build Executable (${{ matrix.os }})
-    needs: test  # Solo se ejecuta si la suite de pruebas pasa exitosamente
+    needs: test  # Runs only if the test suite passes successfully
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
           - os: windows-latest
             artifact_name: restaurante_cli_windows.exe
-            executable_path: dist/restaurante_cli.exe
+            executable_path: dist/restaurant_cli.exe
           - os: ubuntu-latest
             artifact_name: restaurante_cli_linux
-            executable_path: dist/restaurante_cli
+            executable_path: dist/restaurant_cli
 
     steps:
-      - name: Checkout del código
+      - name: Copying the source code
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
-      - name: Instalar dependencias del proyecto y PyInstaller
+      - name: Install project dependencies and PyInstaller
         shell: bash
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pyinstaller pydantic
 
-      - name: Compilar ejecutable con PyInstaller
+      - name: Compile an executable with PyInstaller
         run: |
-          pyinstaller --onefile --name "restaurante_cli" main.py
+          pyinstaller --onefile --name "restaurant_cli" main.py
 
-      - name: Renombrar artefacto según S.O.
+      - name: Rename artifact according to OS.
         shell: bash
         run: |
           mv ${{ matrix.executable_path }} ${{ matrix.artifact_name }}
 
-      - name: Subir artefactos a GitHub Actions
+      - name: Upload artifacts to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
-          name: restaurante-cli-${{ matrix.os }}
+          name: restaurant-cli-${{ matrix.os }}
           path: ${{ matrix.artifact_name }}
 
   # ==========================================
-  # 3. CREACIÓN DE GITHUB RELEASE (Solo en Tags)
+  # 3. GitHub Release Creation (Tags only)
   # ==========================================
   release:
     name: Create GitHub Release
@@ -92,20 +97,19 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Permiso requerido para subir binarios a la Release
-
+      contents: write # Permission required to upload binaries to the release
     steps:
-      - name: Descargar todos los artefactos
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          path: binarios/
+          path: bin/
 
-      - name: Publicar Release en GitHub
+      - name: Publish Release on GitHub
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           files: |
-            binarios/restaurante-cli-windows-latest/restaurante_cli_windows.exe
-            binarios/restaurante-cli-ubuntu-latest/restaurante_cli_linux
+            bin/restaurant-cli-windows-latest/restaurant_cli_windows.exe
+            bin/restaurant-cli-ubuntu-latest/restaurant_cli_linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
