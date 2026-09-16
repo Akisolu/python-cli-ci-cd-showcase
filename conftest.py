@@ -1,1 +1,1 @@
-# Archivo necesario para que pytest reconozca el directorio como un paquete de pruebas.
+# Required so pytest recognizes the directory as a test package.

@@ -3,34 +3,34 @@ from pydantic import ValidationError
 import main as m
 
 # ==========================================
-# 1. CASOS VÁLIDOS (Límite 1 a 4)
+# 1. VALID CASES (Range 1 to 4)
 # ==========================================
 
-@pytest.mark.parametrize("input_val, esperado", [
-    ("1", 1),  # Límite inferior
-    ("2", 2),  # Caso medio
-    ("3", 3),  # Caso medio
-    ("4", 4),  # Límite superior
+@pytest.mark.parametrize("input_value, expected", [
+    ("1", 1),  # Lower bound
+    ("2", 2),  # Middle value
+    ("3", 3),  # Middle value
+    ("4", 4),  # Upper bound
 ])
-def test_validar_opcion_valida(input_val, esperado):
-    resultado = m.validar_opcion_menu(input_val)
-    assert resultado == esperado
+def test_validate_menu_option_valid(input_value, expected):
+    result = m.validar_opcion_menu(input_value)
+    assert result == expected
 
 
 # ==========================================
-# 2. CASOS INVÁLIDOS (Lanza ValidationError)
+# 2. INVALID CASES (Raises ValidationError)
 # ==========================================
 
-@pytest.mark.parametrize("input_val", [
-    "abc",    # String no numérico
-    "-1",     # Fuera de rango (menor a 1)
-    "0",      # Fuera de rango (menor a 1)
-    "5",      # Fuera de rango (mayor a 4)
-    "99",     # Fuera de rango
-    "1.5",    # Flotante en string
-    "True",   # Booleano representado como texto en consola
-    "",       # Cadena vacía
+@pytest.mark.parametrize("input_value", [
+    "abc",    # Non-numeric string
+    "-1",     # Out of range (below 1)
+    "0",      # Out of range (below 1)
+    "5",      # Out of range (above 4)
+    "99",     # Out of range
+    "1.5",    # Float represented as a string
+    "True",   # Boolean represented as console text
+    "",       # Empty string
 ])
-def test_validar_opcion_invalida(input_val):
+def test_validate_menu_option_invalid(input_value):
     with pytest.raises(ValidationError):
-        m.validar_opcion_menu(input_val)
+        m.validar_opcion_menu(input_value)

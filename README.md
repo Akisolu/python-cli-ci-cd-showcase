@@ -1,188 +1,190 @@
-# Proyecto de pruebas y automatización CI/CD
+# Python CLI CI/CD Showcase
 
 ![CI/CD Build Status](https://github.com/Akisolu/python-cli-ci-cd-showcase/actions/workflows/build.yml/badge.svg)
 
-Este repositorio está orientado a demostrar buenas prácticas de testing y automatización en un proyecto Python. El foco principal no es la funcionalidad del restaurante en sí, sino la forma en que se valida el código, se protege la calidad y se automatiza la entrega mediante GitHub Actions.
+This repository demonstrates testing and automation practices in a Python project. The main focus is not the restaurant functionality itself, but how the code is validated, quality is protected, and delivery is automated with GitHub Actions.
 
-La app funciona como una pequeña CLI para gestionar comidas, pero en este proyecto la parte más importante es la infraestructura de calidad: pruebas, validaciones y pipeline de integración continua / despliegue continuo.
+The application is a small CLI for managing meals. Its most important aspect in this showcase is the quality infrastructure: tests, validation, and a continuous integration and delivery pipeline.
 
-## Objetivo del repositorio
+## Repository Goals
 
-Este proyecto sirve como ejemplo práctico de:
+This project provides a practical example of:
 
-- diseño de pruebas automatizadas con `pytest`
-- organización por capas de prueba: unitarias, de integración y end-to-end
-- validación de lógica y comportamiento del sistema
-- automatización de ejecución en GitHub Actions
-- compilación de artefactos ejecutables con PyInstaller
-- publicación automática de releases en GitHub
+- automated testing with `pytest`
+- layered tests: unit, integration, and end-to-end
+- validation of application logic and behavior
+- automated execution with GitHub Actions
+- executable artifact builds with PyInstaller
+- automatic GitHub Release publishing
 
-## Enfoque del proyecto
+## Project Focus
 
-La prioridad del repositorio es demostrar cómo se garantiza la calidad del software antes de publicar una versión:
+The repository demonstrates how software quality is checked before a version is published:
 
-- se prueban funciones de negocio
-- se validan flujos de usuario
-- se comprueban errores y reintentos
-- se ejecutan las pruebas en cada cambio
-- se compila el binario solo si el pipeline pasa
+- business functions are tested
+- user flows are validated
+- errors and retries are covered
+- tests run for every change
+- binaries are built only after the test pipeline succeeds
 
-## Descarga y Ejecución
+## Download and Run
 
-Si deseas probar la aplicación sin instalar Python:
+To try the application without installing Python:
 
-1. Ve a la pestaña de **Releases** en GitHub y descarga la última versión para tu sistema operativo.
-2. **Windows:** Ejecuta `restaurante_cli_windows.exe`.
-3. **Linux:** Otorga permisos de ejecución `chmod +x restaurante_cli_linux` y ejecuta `./restaurante_cli_linux`.
+1. Open the **Releases** tab on GitHub and download the latest version for your operating system.
+2. **Windows:** Run `restaurant_cli_windows.exe`.
+3. **Linux:** Grant execute permission with `chmod +x restaurant_cli_linux`, then run `./restaurant_cli_linux`.
 
-## Estructura del proyecto
+The CLI domain remains in Spanish so the example can model a Spanish-language application while its engineering documentation stays accessible to an international audience.
+
+## Project Structure
 
 ```text
 ├── .github/
 │   └── workflows/
-│       └── build.yml                 # Pipeline principal de CI/CD
+│       └── build.yml                 # Main CI/CD workflow
 ├── src/
-│   ├── crud.py                       # Lógica de persistencia de datos
+│   ├── crud.py                       # Data persistence logic
 │   └── utils/
-│       ├── comida.py                 # Modelo Pydantic para una comida
-│       ├── id_comida.py              # Validación de IDs
-│       └── input_menu.py             # Validación de opciones del menú
+│   │   ├── comida.py                 # Pydantic meal model
+│   │   ├── id_comida.py              # ID validation
+│   │   └── input_menu.py             # Menu option validation
 ├── tests/
-│   ├── units/                        # Pruebas unitarias
-│   ├── integrations/                 # Pruebas de integración
-│   └── end-to-end/                   # Pruebas del flujo real de la CLI
-├── main.py                           # Punto de entrada de la aplicación
-├── conftest.py                       # Configuración de pytest
-├── requirements.txt                  # Dependencias del proyecto
-├── version                           # Versión del proyecto
-└── README.md                         # Documentación del repositorio
+│   ├── units/                        # Unit tests
+│   ├── integrations/                 # Integration tests
+│   └── end-to-end/                   # End-to-end CLI tests
+├── main.py                           # Application entry point
+├── conftest.py                       # Pytest configuration
+├── requirements.txt                  # Project dependencies
+├── version                           # Project version
+└── README.md                         # Repository documentation
 ```
 
-## Tests
+## Testing Strategy
 
-La carpeta `tests/` es el corazón del proyecto. Aquí se valida la calidad del software en distintos niveles.
+The `tests/` directory is the core of the project. It validates software quality at multiple levels.
 
-### 1. Tests unitarios
-Ubicados en `tests/units/`.
+### 1. Unit tests
+Located in `tests/units/`.
 
-Estos tests verifican:
+These tests cover:
 
-- lectura y escritura del almacenamiento JSON
-- creación y eliminación de registros
-- validaciones con Pydantic
-- manejo de entradas inválidas
-- comportamiento esperado de funciones aisladas
+- JSON storage reads and writes
+- record creation and deletion
+- Pydantic validation
+- invalid input handling
+- isolated function behavior
 
-Ejemplos de validación:
+Examples:
 
-- `_cargar_datos()` devuelve lista vacía si el archivo no existe
-- `crear_comida()` genera IDs correctamente
-- `eliminar_comida()` responde según el resultado real
+- `_cargar_datos()` returns an empty list when the file does not exist
+- `crear_comida()` generates IDs correctly
+- `eliminar_comida()` reports the actual operation result
 
-### 2. Tests de integración
-Ubicados en `tests/integrations/`.
+### 2. Integration tests
+Located in `tests/integrations/`.
 
-Estos tests comprueban que la lógica principal de la app funciona en conjunto con la capa de acceso a datos y la interacción con la consola.
+These tests verify that the main application logic works with the data access layer and console interaction.
 
-Se validan casos como:
+They cover scenarios such as:
 
-- agregar una comida desde la lógica principal
-- mostrar comidas
-- eliminar una comida
-- reintentos cuando los datos ingresados son inválidos
+- adding a meal through the main application logic
+- displaying meals
+- deleting a meal
+- retrying after invalid input
 
-### 3. Tests end-to-end
-Ubicados en `tests/end-to-end/`.
+### 3. End-to-end tests
+Located in `tests/end-to-end/`.
 
-Estos tests simulan la ejecución real del programa desde la terminal y verifican el comportamiento de la CLI de extremo a extremo.
+These tests simulate the real terminal execution and verify the CLI end to end.
 
-Se prueban flujos como:
+They cover flows such as:
 
-- agregar una comida y salir
-- ingresar una opción inválida y continuar con un flujo correcto
-- validar que la salida por consola sea la esperada
+- adding a meal and exiting
+- entering an invalid option and continuing with a valid flow
+- validating the expected console output
 
-## Ejecución de pruebas
+## Run Tests
 
-Para correr la suite completa:
+Run the complete test suite with:
 
 ```bash
 python -m pytest tests/ -v
 ```
 
-O con el entorno virtual del proyecto:
+Or use the project virtual environment:
 
 ```bash
 .\.venv\Scripts\python.exe -m pytest tests/ -q
 ```
 
-## Estado verificado
+## Verified Status
 
-La suite actual de pruebas ha sido validada exitosamente:
+The current test suite has been validated successfully with 64 passing tests:
 
 ```text
-64 passed in 1.68s
+64 passed
 ```
 
-Esto es una evidencia clara de que el proyecto está funcionando correctamente desde la perspectiva de calidad y automatización.
+This confirms that the project is working correctly from a quality and automation perspective.
 
-## Pipeline de CI/CD
+## CI/CD Workflow
 
-La automatización está definida en `.github/workflows/build.yml` y representa una parte clave del proyecto.
+The automation is defined in `.github/workflows/build.yml` and is a key part of the project.
 
-### Trigger del workflow
+### Workflow Triggers
 
-El pipeline se dispara cuando ocurre alguno de estos eventos:
+The workflow runs for these events:
 
-- `push` a la rama `main`
-- `pull_request` hacia `main`
-- creación de tags con formato `v*`
+- a `push` to the `main` branch
+- a `pull_request` targeting `main`
+- creation of tags matching `v*`
 
-### Jobs del pipeline
+### Jobs
 
-#### 1. Job de pruebas
+#### 1. Test job
 
-Este job ejecuta:
+This job performs:
 
-- checkout del repositorio
-- instalación de Python 3.11
-- instalación de dependencias
-- ejecución de la suite completa de tests
+- repository checkout
+- Python setup across the configured version matrix
+- dependency installation
+- execution of the complete test suite
 
-La intención es impedir que cambios no validados lleguen a la siguiente etapa.
+This prevents unvalidated changes from reaching the next stage.
 
-#### 2. Job de build
+#### 2. Build job
 
-Solo se ejecuta si las pruebas pasan correctamente.
+This job runs only after the tests pass.
 
-En esta etapa se:
+It then:
 
-- compila la aplicación con PyInstaller
-- genera el ejecutable desde Windows y Ubuntu
-- sube los binarios como artefactos de GitHub Actions
+- builds the application with PyInstaller
+- creates executables on Windows and Ubuntu
+- uploads the binaries as GitHub Actions artifacts
 
-#### 3. Job de release
+#### 3. Release job
 
-Se activa únicamente cuando se crea un tag de versión.
+This job runs only when a version tag is created.
 
-Su objetivo es:
+It:
 
-- descargar los artefactos generados
-- crear un GitHub Release
-- publicar los binarios de la versión
+- downloads the generated artifacts
+- creates a GitHub Release
+- publishes the version binaries
 
-## Relación entre tests y CI/CD
+## Tests and CI/CD
 
-Este proyecto demuestra una buena práctica de desarrollo moderno:
+This project demonstrates a modern development workflow:
 
-- primero se prueban los cambios
-- luego se compila el software
-- después se genera el artefacto final
-- finalmente se publica la versión si el proceso completo fue exitoso
+- changes are tested first
+- the software is built next
+- the final artifacts are generated
+- the version is published only if the complete process succeeds
 
-De esta manera, la automatización no es solo un detalle adicional, sino una capa de seguridad que valida la calidad del proyecto antes de entregarlo.
+Automation is therefore a quality gate that validates the project before delivery.
 
-## Tecnologías utilizadas
+## Technologies
 
 - Python
 - Pytest
@@ -190,14 +192,14 @@ De esta manera, la automatización no es solo un detalle adicional, sino una cap
 - PyInstaller
 - GitHub Actions
 
-## Resumen
+## Summary
 
-Este repositorio está pensado como una práctica enfocada en QA automatizada y pipeline de despliegue. Aunque la app demuestra una funcionalidad básica de restaurante, su verdadero valor está en la estructura del proyecto para garantizar calidad con pruebas y automatización continua.
+This repository is a practical example of automated QA and deployment pipelines. Although the app provides basic restaurant functionality, its main value is the project structure used to enforce quality with testing and continuous automation.
 
-El foco principal es este flujo:
+The central flow is:
 
 ```text
-código -> pruebas -> validación -> build -> release
+code -> tests -> validation -> build -> release
 ```
 
-Y eso es precisamente lo que este proyecto busca enseñar y demostrar.
+That is the workflow this project is designed to teach and demonstrate.
