@@ -1,5 +1,13 @@
 # Python CLI CI/CD Showcase
 
+**What it does:** A small menu app whose real purpose is to show how code is automatically tested and published as ready-to-run programs for Windows and Linux.  
+**Why it matters:** Without automated checks, broken changes can reach users unnoticed.
+
+**Qué hace:** Una pequeña aplicación de menús cuyo verdadero propósito es mostrar cómo se prueba el código automáticamente y se publica como programas listos para usar en Windows y Linux.  
+**Por qué importa:** Sin comprobaciones automáticas, los cambios con errores pueden llegar a los usuarios sin que nadie los detecte.
+
+> 📄 Versión completa en español: [README.es.md](README.es.md)
+
 ![CI/CD Build Status](https://github.com/Akisolu/python-cli-ci-cd-showcase/actions/workflows/build.yml/badge.svg)
 
 This repository demonstrates testing and automation practices in a Python project. The main focus is not the restaurant functionality itself, but how the code is validated, quality is protected, and delivery is automated with GitHub Actions.
